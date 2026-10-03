@@ -2,6 +2,8 @@
 
 An interactive statistics study app that runs entirely in the browser. Enter your data and it calculates the answer, shows every step of the work, and graphs the result. Hover over almost anything to see a short explanation of how to calculate it, filled in with your own numbers.
 
+**Live app: [kemckai.github.io/Statistics_app](https://kemckai.github.io/Statistics_app/)**
+
 No installs, no build step, no dependencies — just open `index.html`.
 
 ## Features
