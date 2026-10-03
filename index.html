@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Spread &amp; Variation Lab</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Spread &amp; Variation Lab</h1>
+      <p class="subtitle">Measures of location, weighted &amp; moving averages, frequency tables, range, variance, standard deviation, coefficient of variation, the Empirical Rule, and Chebyshev's Theorem — with every step shown and graphed.</p>
+      <label class="tips-switch"><input type="checkbox" id="tips-toggle" checked /> Show “how to calculate” tips on hover</label>
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="spread">Spread</button>
+        <button class="tab" data-tab="location">Location</button>
+        <button class="tab" data-tab="averages">Averages</button>
+        <button class="tab" data-tab="freq">Frequency Table</button>
+        <button class="tab" data-tab="cv">Coefficient of Variation</button>
+        <button class="tab" data-tab="empirical">Empirical Rule</button>
+        <button class="tab" data-tab="chebyshev">Chebyshev</button>
+        <button class="tab" data-tab="guide">Study Guide</button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ============ SPREAD ============ -->
+      <section id="tab-spread" class="panel active">
+        <div class="card">
+          <h2>Your data</h2>
+          <label for="data-input">Paste or type numbers (separated by commas, spaces, or new lines):</label>
+          <textarea data-tip="data-input" id="data-input" rows="4" placeholder="e.g. 3, 7, 15">4, 8, 12, 15, 6, 9, 10</textarea>
+          <div class="row">
+            <label class="file-btn" data-tip="file">
+              Load CSV / text file
+              <input type="file" id="data-file" accept=".csv,.txt,.tsv" hidden />
+            </label>
+            <fieldset class="toggle">
+              <legend>This data is a…</legend>
+              <label data-tip="kind-sample"><input type="radio" name="kind" value="sample" checked /> Sample (divide by n − 1)</label>
+              <label data-tip="kind-population"><input type="radio" name="kind" value="population" /> Population (divide by N)</label>
+            </fieldset>
+            <label class="inline" data-tip="rounding">
+              Round to
+              <select id="round-mode">
+                <option value="auto" selected>one more decimal than data (auto)</option>
+                <option value="0">0 decimals</option>
+                <option value="1">1 decimal</option>
+                <option value="2">2 decimals</option>
+                <option value="3">3 decimals</option>
+                <option value="4">4 decimals</option>
+              </select>
+            </label>
+          </div>
+          <p id="data-warning" class="warning" hidden></p>
+          <p id="data-type" class="hint" data-tip="discrete"></p>
+        </div>
+
+        <div id="spread-results" class="results"></div>
+
+        <div class="card">
+          <h2>Graphs</h2>
+          <h3>Dot plot with ±1, ±2, ±3 standard deviation bands</h3>
+          <div id="dotplot"></div>
+          <h3>Histogram</h3>
+          <div id="histogram"></div>
+        </div>
+
+        <div class="card">
+          <h2>Step-by-step work</h2>
+          <div id="spread-steps"></div>
+        </div>
+      </section>
+
+      <!-- ============ LOCATION ============ -->
+      <section id="tab-location" class="panel">
+        <div class="card">
+          <h2>Measures of location</h2>
+          <p>Statistics that describe a “typical” value (the center) or where a value falls within the data (quantiles).</p>
+          <label for="loc-input">Data:</label>
+          <textarea id="loc-input" rows="3" data-tip="data-input">0, 0, 9, 9, -13, 0, 9</textarea>
+          <div class="row">
+            <button id="loc-use-data" class="secondary" data-tip="use-data-loc">Use my Spread data</button>
+            <label class="inline" data-tip="loc-round">Round to
+              <select id="loc-round">
+                <option value="auto" selected>one more decimal than data (auto)</option>
+                <option value="0">0 decimals</option>
+                <option value="1">1 decimal</option>
+                <option value="2">2 decimals</option>
+                <option value="3">3 decimals</option>
+              </select>
+            </label>
+            <label class="inline" data-tip="pct-method">Percentile method
+              <select id="loc-method">
+                <option value="locator" selected>L = (P/100)·n — round up / average</option>
+                <option value="interp">L = (P/100)·(n + 1) — interpolate</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div id="loc-center"></div>
+
+        <div class="card">
+          <h2>Quantiles (non-central location)</h2>
+          <div id="loc-quantiles"></div>
+          <div class="grid3">
+            <label data-tip="pct-find">Find the Pth percentile — P =<input type="number" id="loc-p" min="1" max="99" step="any" value="90" /></label>
+            <label data-tip="pct-rank">Percentile rank of the value x =<input type="number" id="loc-x" step="any" value="9" /></label>
+          </div>
+          <div id="loc-pct-steps"></div>
+          <div id="loc-boxplot"></div>
+        </div>
+
+        <div class="card">
+          <h2>Other measures of location</h2>
+          <div class="row">
+            <label class="inline" data-tip="winsor">Winsorize
+              <input type="number" id="loc-wins" min="0" max="45" step="1" value="10" style="width: 70px" /> % from each end
+            </label>
+          </div>
+          <div id="loc-other"></div>
+        </div>
+
+        <div class="card">
+          <h2>Where are the mean, median and mode? (skewness)</h2>
+          <div class="row">
+            <label class="inline" data-tip="skew-shape">Shape
+              <select id="skew-shape">
+                <option value="right">Skewed right (positive, tail on the right)</option>
+                <option value="left">Skewed left (negative, tail on the left)</option>
+                <option value="sym">Symmetric (bell-shaped)</option>
+              </select>
+            </label>
+            <span class="build" data-tip="skew-letters">Letters on the graph, left → right:
+              <input type="text" id="skew-l1" value="A" maxlength="3" style="width: 48px" />
+              <input type="text" id="skew-l2" value="B" maxlength="3" style="width: 48px" />
+              <input type="text" id="skew-l3" value="C" maxlength="3" style="width: 48px" />
+            </span>
+          </div>
+          <div id="skew-answer"></div>
+          <div id="skew-chart"></div>
+          <p id="skew-data" class="hint"></p>
+        </div>
+
+        <div class="card guide">
+          <h2>Quick decision guide</h2>
+          <table>
+            <thead><tr><th>Measure</th><th>Definition</th><th>Best used for</th><th>Outliers?</th></tr></thead>
+            <tbody>
+              <tr data-tip="loc-mean"><td><strong>Mean</strong></td><td>Sum ÷ number of values</td><td>Symmetric data without outliers</td><td>Highly sensitive</td></tr>
+              <tr data-tip="loc-median"><td><strong>Median</strong></td><td>Middle value of sorted data (50th percentile)</td><td>Skewed data, ordinal data, outliers (income, house prices)</td><td>Resistant</td></tr>
+              <tr data-tip="loc-mode"><td><strong>Mode</strong></td><td>Most frequent value</td><td>Categorical (nominal) data, most common case</td><td>Not affected; may not be unique</td></tr>
+              <tr data-tip="quartiles"><td><strong>Percentiles / quartiles</strong></td><td>Values that cut sorted data into equal parts</td><td>Describing a position (“top 10%”) or spread</td><td>Resistant</td></tr>
+            </tbody>
+          </table>
+          <ul>
+            <li><strong>Percentiles</strong> split data into 100 parts, <strong>quartiles</strong> into 4 (Q1 = P25, Q2 = P50 = median, Q3 = P75), <strong>deciles</strong> into 10 (D1 = P10 … D9 = P90), <strong>quintiles</strong> into 5 (P20, P40, P60, P80).</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ AVERAGES ============ -->
+      <section id="tab-averages" class="panel">
+        <div class="card">
+          <h2>Weighted mean</h2>
+          <p class="formula" data-tip="weighted">Weighted mean = Σ(w × x) ÷ Σw</p>
+          <div class="row">
+            <button id="wm-example" class="secondary">Load example</button>
+            <label class="inline">Round to
+              <select id="wm-round">
+                <option value="1">1 decimal</option>
+                <option value="2">2 decimals</option>
+                <option value="3" selected>3 decimals</option>
+                <option value="4">4 decimals</option>
+              </select>
+            </label>
+          </div>
+          <table class="classes-input">
+            <thead><tr><th data-tip="weight">Weight (w)</th><th data-tip="wm-x">Data value (x)</th><th data-tip="wx">w × x</th><th></th></tr></thead>
+            <tbody id="wm-rows"></tbody>
+          </table>
+          <button id="wm-add" class="secondary">+ Add row</button>
+          <div id="wm-result"></div>
+        </div>
+
+        <div class="card">
+          <h2>Moving average</h2>
+          <p class="formula" data-tip="moving-avg">k-period moving average = (this value + the k − 1 values before it) ÷ k</p>
+          <div class="row">
+            <button id="ma-example" class="secondary">Load example (deaths by year)</button>
+            <label class="inline" data-tip="ma-k">Period k
+              <input type="number" id="ma-k" min="2" step="1" value="2" style="width: 70px" />
+            </label>
+            <label class="inline" data-tip="ma-target">for
+              <select id="ma-target"></select>
+            </label>
+          </div>
+          <table class="classes-input">
+            <thead><tr><th data-tip="ma-label">Period (year)</th><th data-tip="ma-value">Value</th><th data-tip="moving-avg">Moving avg.</th><th></th></tr></thead>
+            <tbody id="ma-rows"></tbody>
+          </table>
+          <button id="ma-add" class="secondary">+ Add period</button>
+          <div id="ma-result"></div>
+          <div id="ma-chart"></div>
+        </div>
+
+        <div class="card">
+          <h2>Find a missing value from the mean</h2>
+          <p class="formula" data-tip="missing">Missing value = (mean × n) − (sum of the known values)</p>
+          <div class="grid3">
+            <label data-tip="missing-mean">Mean of all values<input type="number" step="any" id="mv-mean" value="39.04" /></label>
+            <label data-tip="missing-n">Total number of values (n)<input type="number" step="1" id="mv-n" value="6" /></label>
+          </div>
+          <label data-tip="missing-known">Known values<textarea id="mv-known" rows="2">36.73, 35.78, 37.25, 34.59, 42.77</textarea></label>
+          <div id="mv-result"></div>
+        </div>
+      </section>
+
+      <!-- ============ FREQUENCY TABLE ============ -->
+      <section id="tab-freq" class="panel">
+        <div class="card">
+          <h2>Frequency table</h2>
+          <p>Type each class's lower limit, upper limit and frequency, load an example, or build the classes from your Spread data.</p>
+          <div class="row">
+            <label class="inline" data-tip="freq-preset">Example
+              <select id="freq-preset">
+                <option value="">— choose —</option>
+                <option value="tv">Hours students watch TV in a week</option>
+                <option value="scores">Scores on a test</option>
+              </select>
+            </label>
+            <label class="inline">Table title<input type="text" id="freq-title" value="Scores on a Test" style="width: 220px" /></label>
+          </div>
+          <table class="classes-input">
+            <thead>
+              <tr>
+                <th>Class</th>
+                <th data-tip="lower-limit">Lower limit</th>
+                <th data-tip="upper-limit">Upper limit</th>
+                <th data-tip="frequency">Frequency</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="freq-rows"></tbody>
+          </table>
+          <div class="row">
+            <button id="freq-add" class="secondary">+ Add class</button>
+            <span class="build" data-tip="build-classes">
+              or build
+              <input type="number" id="freq-k" min="1" step="1" value="5" style="width: 70px" />
+              classes from my Spread data
+              <button id="freq-build" class="secondary">Build</button>
+            </span>
+          </div>
+          <p id="freq-build-steps" class="hint"></p>
+        </div>
+
+        <div id="freq-results"></div>
+
+        <div class="card">
+          <h2>Answer a question</h2>
+          <div class="grid3">
+            <label data-tip="freq-question">Find the…
+              <select id="freq-q">
+                <option value="cum">cumulative frequency</option>
+                <option value="lb">lower class boundary</option>
+                <option value="ub">upper class boundary</option>
+                <option value="width">class width</option>
+                <option value="mid">midpoint (class mark)</option>
+                <option value="rel">relative frequency</option>
+              </select>
+            </label>
+            <label id="freq-qclass-wrap">for class #
+              <select id="freq-qclass"></select>
+            </label>
+          </div>
+          <div id="freq-answer"></div>
+        </div>
+
+        <div class="card">
+          <h2>Histogram (bars drawn at the class boundaries)</h2>
+          <div id="freq-hist"></div>
+        </div>
+      </section>
+
+      <!-- ============ CV ============ -->
+      <section id="tab-cv" class="panel">
+        <div class="card">
+          <h2>Compare consistency with the Coefficient of Variation</h2>
+          <p class="formula" data-tip="cv-formula">CV = ( s ÷ x̄ ) × 100%</p>
+          <p>Lower CV = more consistent / stable. Enter raw data <em>or</em> a mean and standard deviation for each group.</p>
+          <div class="row">
+            <label class="inline" data-tip="cv-round">Round CV to
+              <select id="cv-round">
+                <option value="0">0 decimals</option>
+                <option value="1">1 decimal</option>
+                <option value="2" selected>2 decimals</option>
+                <option value="3">3 decimals</option>
+              </select>
+            </label>
+            <fieldset class="toggle">
+              <legend>Raw data is a…</legend>
+              <label data-tip="kind-sample"><input type="radio" name="cv-kind" value="sample" checked /> Sample</label>
+              <label data-tip="kind-population"><input type="radio" name="cv-kind" value="population" /> Population</label>
+            </fieldset>
+          </div>
+          <div class="grid2" id="cv-groups"></div>
+          <button id="cv-add" class="secondary">+ Add another group</button>
+        </div>
+        <div id="cv-results" class="results"></div>
+      </section>
+
+      <!-- ============ EMPIRICAL ============ -->
+      <section id="tab-empirical" class="panel">
+        <div class="card">
+          <h2><span data-tip="emp-rule">Empirical Rule (68 – 95 – 99.7)</span></h2>
+          <p class="note">⚠️ Use ONLY when the problem says the distribution is <strong>bell-shaped</strong> or <strong>normal</strong>.</p>
+          <div class="grid3">
+            <label data-tip="emp-mean">Mean (μ)<input type="number" step="any" id="emp-mean" value="100" /></label>
+            <label data-tip="emp-sd">Standard deviation (σ)<input type="number" step="any" id="emp-sd" value="15" /></label>
+            <label data-tip="emp-mode">Question type
+              <select id="emp-mode">
+                <option value="below">Less than / no more than / at most X</option>
+                <option value="above">Greater than / at least / more than X</option>
+                <option value="between">Between X and X₂</option>
+              </select>
+            </label>
+            <label data-tip="emp-x">X<input type="number" step="any" id="emp-x" value="130" /></label>
+            <label id="emp-x2-wrap" data-tip="emp-x" hidden>X₂<input type="number" step="any" id="emp-x2" value="115" /></label>
+          </div>
+          <button id="emp-use-data" class="secondary" data-tip="use-data">Use mean &amp; SD from my Spread data</button>
+        </div>
+        <div id="emp-results" class="results"></div>
+        <div class="card"><div id="emp-chart"></div></div>
+      </section>
+
+      <!-- ============ CHEBYSHEV ============ -->
+      <section id="tab-chebyshev" class="panel">
+        <div class="card">
+          <h2>Chebyshev's Theorem</h2>
+          <p class="note">Works for <strong>any</strong> distribution. Use when the problem does NOT say bell-shaped / normal.</p>
+          <p class="formula" data-tip="ch-formula">At least ( 1 − 1/k² ) × 100% of data lies within k standard deviations of the mean (k &gt; 1)</p>
+          <div class="grid3">
+            <label data-tip="ch-mean">Mean (μ)<input type="number" step="any" id="ch-mean" value="50" /></label>
+            <label data-tip="ch-sd">Standard deviation (σ)<input type="number" step="any" id="ch-sd" value="5" /></label>
+            <label data-tip="ch-mode">I know…
+              <select id="ch-mode">
+                <option value="percent">the percentage (find k and the interval)</option>
+                <option value="k">k (find the percentage and interval)</option>
+                <option value="interval">an interval (find k and the percentage)</option>
+              </select>
+            </label>
+            <label id="ch-percent-wrap" data-tip="ch-percent">Percentage (%)<input type="number" step="any" id="ch-percent" value="88.9" /></label>
+            <label id="ch-k-wrap" data-tip="ch-k" hidden>k<input type="number" step="any" id="ch-k" value="2" /></label>
+            <label id="ch-lo-wrap" data-tip="ch-interval" hidden>Lower bound<input type="number" step="any" id="ch-lo" value="40" /></label>
+            <label id="ch-hi-wrap" data-tip="ch-interval" hidden>Upper bound<input type="number" step="any" id="ch-hi" value="60" /></label>
+          </div>
+          <div class="row">
+            <button id="ch-use-data" class="secondary" data-tip="use-data">Use mean &amp; SD from my Spread data</button>
+            <span class="chips">Quick k:
+              <button class="chip" data-tip="chip" data-k="2">k=2 → 75%</button>
+              <button class="chip" data-tip="chip" data-k="3">k=3 → 88.9%</button>
+              <button class="chip" data-tip="chip" data-k="4">k=4 → 93.75%</button>
+            </span>
+          </div>
+        </div>
+        <div id="ch-results" class="results"></div>
+        <div class="card"><div id="ch-chart"></div></div>
+      </section>
+
+      <!-- ============ GUIDE ============ -->
+      <section id="tab-guide" class="panel">
+        <div class="card guide">
+          <h2>Core vocabulary</h2>
+          <ul>
+            <li data-tip="kind-sample"><strong>Sample (n)</strong>: a subset of a larger group. Formulas use <code>n − 1</code> in the denominator.</li>
+            <li data-tip="kind-population"><strong>Population (N)</strong>: the entire group of interest. Formulas use <code>N</code>.</li>
+            <li data-tip="mean"><strong>Mean (x̄ or μ)</strong>: the average. x̄ for a sample, μ for a population.</li>
+            <li data-tip="sd"><strong>Standard deviation (s or σ)</strong>: typical distance of data from the mean, in the data's units.</li>
+            <li data-tip="variance"><strong>Variance (s² or σ²)</strong>: the standard deviation squared, in squared units.</li>
+          </ul>
+          <h2>Measures of location</h2>
+          <ul>
+            <li data-tip="loc-mean"><strong>Center</strong>: mean (Σx ÷ n), median (middle of sorted data, position (n + 1) ÷ 2), mode (most frequent; no mode / unimodal / bimodal / multimodal).</li>
+            <li data-tip="quartiles"><strong>Quantiles</strong>: percentiles (100 parts), quartiles (4), quintiles (5), deciles (10).</li>
+            <li data-tip="geo-mean"><strong>Others</strong>: geometric mean (growth rates), harmonic mean (rates), midrange ((max + min) ÷ 2), trimean ((Q1 + 2Q2 + Q3) ÷ 4), winsorized mean (extremes replaced).</li>
+            <li data-tip="weighted"><strong>Weighted mean</strong> = Σ(w × x) ÷ Σw. <strong>Moving average</strong> = average of a period and the k − 1 before it. <strong>Missing value</strong> = mean × n − known sum.</li>
+            <li data-tip="skew-shape"><strong>Skew</strong>: right-skewed → Mode, Median, Mean (left to right); left-skewed → Mean, Median, Mode; symmetric → all equal.</li>
+            <li><strong>Which to use</strong>: mean for symmetric data without outliers; median for skewed data or outliers; mode for categorical data; percentiles to describe a position (“top 10%”).</li>
+          </ul>
+
+          <h2>Discrete vs. continuous data</h2>
+          <table>
+            <thead><tr><th></th><th>Discrete</th><th>Continuous</th></tr></thead>
+            <tbody>
+              <tr data-tip="discrete"><td><strong>Values</strong></td><td>Countable, separate values (often whole numbers)</td><td>Any value in a range, including fractions/decimals</td></tr>
+              <tr data-tip="discrete"><td><strong>Comes from</strong></td><td><em>Counting</em></td><td><em>Measuring</em></td></tr>
+              <tr data-tip="discrete"><td><strong>Examples</strong></td><td>Cars in a parking lot (no 2.5 cars), people in a room, a die roll (1–6)</td><td>Height, time, distance, temperature, weight</td></tr>
+            </tbody>
+          </table>
+          <p data-tip="why-discrete"><strong>Why does recorded data always look discrete?</strong> Reality (time, distance, temperature) is often continuous, but data we write down is chopped into finite pieces:</p>
+          <ol data-tip="why-discrete">
+            <li><strong>Measurement resolution</strong>: rulers stop at millimetres, thermometers at 0.1°, so values get rounded (height 5.9 ft).</li>
+            <li><strong>Computers are binary</strong>: everything is stored as a finite string of 1s and 0s.</li>
+            <li><strong>Categorisation</strong>: we group continuous things into categories (“Under 18 / 18+”) so we can count and test them (e.g. Chi-squared tests).</li>
+            <li><strong>Sampling</strong>: continuous signals are recorded at fixed intervals (a CD samples sound 44,100 times per second).</li>
+            <li><strong>Storage</strong>: infinite detail can't be stored, so a photo becomes a grid of pixels.</li>
+          </ol>
+          <p>So: a variable is <em>truly</em> discrete when it can only take countable values because you're <strong>counting</strong> (not just because a tool rounded it). Measured quantities stay continuous even if they're recorded to whole numbers.</p>
+
+          <h2>Frequency tables</h2>
+          <ul>
+            <li data-tip="lower-limit"><strong>Lower / upper class limit</strong>: the smallest / largest value that can belong to a class (e.g. 48 – 65).</li>
+            <li data-tip="class-width"><strong>Class width</strong> = lower limit of next class − lower limit of this class (48 − 30 = 18).</li>
+            <li data-tip="lower-boundary"><strong>Class boundaries</strong>: split the gap between classes in half. Gap = next lower limit − this upper limit (102 − 101 = 1). Lower boundary = lower limit − gap ÷ 2 (101.5); upper boundary = upper limit + gap ÷ 2 (65.5).</li>
+            <li data-tip="midpoint"><strong>Midpoint</strong> = (lower limit + upper limit) ÷ 2.</li>
+            <li data-tip="cum-freq"><strong>Cumulative frequency</strong> = this class's frequency plus all classes before it (12 + 3 + 4 = 19).</li>
+            <li data-tip="rel-freq"><strong>Relative frequency</strong> = class frequency ÷ total frequency.</li>
+          </ul>
+
+          <h2>Rounding rule (variance / standard deviation)</h2>
+          <p data-tip="rounding">Round the final answer to <strong>one more decimal place</strong> than the original data. Data 4, 8, 12 → 1 decimal. Data 4.5, 8.2 → 2 decimals.</p>
+          <h2>Which rule do I use?</h2>
+          <table>
+            <thead><tr><th>Problem says…</th><th>Use</th></tr></thead>
+            <tbody>
+              <tr data-tip="emp-rule"><td>“bell-shaped” or “normal”</td><td>Empirical Rule (68–95–99.7)</td></tr>
+              <tr data-tip="ch-formula"><td>Any / unknown shape</td><td>Chebyshev: 1 − 1/k²</td></tr>
+              <tr data-tip="cv"><td>“Which is more consistent?”</td><td>Coefficient of Variation — smaller wins</td></tr>
+            </tbody>
+          </table>
+          <h2>Test-taking checklist</h2>
+          <ol>
+            <li>Sample or population? Variance or standard deviation? (Variance is squared.)</li>
+            <li>Bell-shaped (Empirical) or any shape (Chebyshev)?</li>
+            <li>Check rounding instructions — count decimals in the original data first.</li>
+            <li>For consistency questions, compute CV for both groups; the smaller CV is more consistent.</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <script src="stats.js"></script>
+    <script src="charts.js"></script>
+    <script src="tips.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
