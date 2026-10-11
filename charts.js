@@ -383,5 +383,36 @@
     return svg(W, H, body);
   }
 
-  root.Charts = { dotPlot, histogram, bellCurve, chebyshevLine, cvBars, freqHistogram, boxPlot, skewCurve, lineChart };
+  /** Scatter plot of paired (x, y) values. */
+  function scatter(pairs) {
+    const W = 720, H = 320, padL = 52, padR = 20, padT = 16, padB = 40;
+    const xs = pairs.map((p) => p.x);
+    const ys = pairs.map((p) => p.y);
+    let x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    if (x0 === x1) { x0 -= 1; x1 += 1; }
+    if (y0 === y1) { y0 -= 1; y1 += 1; }
+    const xPad = (x1 - x0) * 0.08;
+    const yPad = (y1 - y0) * 0.08;
+    x0 -= xPad; x1 += xPad; y0 -= yPad; y1 += yPad;
+    const x = scale(x0, x1, padL, W - padR);
+    const y = scale(y0, y1, H - padB, padT);
+    const fmt = (v) => String(Number(v.toFixed(4)));
+    let dots = "";
+    pairs.forEach((p) => {
+      dots += `<circle cx="${x(p.x).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="5" fill="${COLORS.accent2}"${tip("corr-point", `(${fmt(p.x)}, ${fmt(p.y)})`)}/>`;
+    });
+    const body =
+      `<line x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}" stroke="${COLORS.axis}"/>` +
+      `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="${COLORS.axis}"/>` +
+      `<text x="${(padL + W - padR) / 2}" y="${H - 8}" text-anchor="middle" font-size="12" fill="${COLORS.text}">x</text>` +
+      `<text x="14" y="${(padT + H - padB) / 2}" text-anchor="middle" font-size="12" fill="${COLORS.text}">y</text>` +
+      `<text x="${padL}" y="${H - 14}" text-anchor="middle" font-size="10" fill="${COLORS.axis}">${fmt(Math.min(...xs))}</text>` +
+      `<text x="${W - padR}" y="${H - 14}" text-anchor="middle" font-size="10" fill="${COLORS.axis}">${fmt(Math.max(...xs))}</text>` +
+      `<text x="${padL - 6}" y="${H - padB}" text-anchor="end" font-size="10" fill="${COLORS.axis}">${fmt(Math.min(...ys))}</text>` +
+      `<text x="${padL - 6}" y="${padT + 8}" text-anchor="end" font-size="10" fill="${COLORS.axis}">${fmt(Math.max(...ys))}</text>` +
+      dots;
+    return svg(W, H, body);
+  }
+
+  root.Charts = { dotPlot, histogram, bellCurve, chebyshevLine, cvBars, freqHistogram, boxPlot, skewCurve, lineChart, scatter };
 })(typeof globalThis !== "undefined" ? globalThis : this);

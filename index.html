@@ -9,7 +9,7 @@
   <body>
     <header>
       <h1>Spread &amp; Variation Lab</h1>
-      <p class="subtitle">Measures of location, weighted &amp; moving averages, frequency tables, range, variance, standard deviation, coefficient of variation, the Empirical Rule, and Chebyshev's Theorem — with every step shown and graphed.</p>
+      <p class="subtitle">Introductory statistics: summarizing data, center and variation, percentiles, grouped means, z-scores, correlation, and levels of measurement — with every step shown.</p>
       <label class="tips-switch"><input type="checkbox" id="tips-toggle" checked /> Show “how to calculate” tips on hover</label>
       <nav class="tabs" role="tablist">
         <button class="tab active" data-tab="spread">Spread</button>
@@ -19,6 +19,10 @@
         <button class="tab" data-tab="cv">Coefficient of Variation</button>
         <button class="tab" data-tab="empirical">Empirical Rule</button>
         <button class="tab" data-tab="chebyshev">Chebyshev</button>
+        <button class="tab" data-tab="stem">Stem &amp; Leaf</button>
+        <button class="tab" data-tab="zscore">Z-Score</button>
+        <button class="tab" data-tab="corr">Correlation</button>
+        <button class="tab" data-tab="levels">Levels</button>
         <button class="tab" data-tab="guide">Study Guide</button>
       </nav>
     </header>
@@ -69,6 +73,17 @@
         <div class="card">
           <h2>Step-by-step work</h2>
           <div id="spread-steps"></div>
+        </div>
+
+        <div class="card guide">
+          <h2>Rules: mean, variance, and standard deviation</h2>
+          <ul>
+            <li data-tip="mean"><strong>Mean (average):</strong> sum of all values divided by the number of values. <span class="formula">x̄ = Σx ÷ n</span></li>
+            <li data-tip="loc-median"><strong>Median:</strong> the middle number when the data is ordered. If n is odd, it is the exact middle. If n is even, it is the average of the two middle numbers. Worked out on the <button type="button" class="link-tab" data-goto="location">Location</button> tab.</li>
+            <li data-tip="variance"><strong>Sample variance (s²):</strong> measures spread. <span class="formula">s² = Σ(x − x̄)² ÷ (n − 1)</span> Always divide by <strong>n − 1</strong> for a sample, and by <strong>N</strong> for a population.</li>
+            <li data-tip="sd"><strong>Sample standard deviation (s):</strong> the square root of the variance.</li>
+            <li data-tip="zscore"><strong>Z-score:</strong> how many standard deviations a data point is from the mean. <span class="formula">z = (x − μ) ÷ s</span> Positive means above the mean; negative means below. Use the <button type="button" class="link-tab" data-goto="zscore">Z-Score</button> tab.</li>
+          </ul>
         </div>
       </section>
 
@@ -138,9 +153,23 @@
               <input type="text" id="skew-l3" value="C" maxlength="3" style="width: 48px" />
             </span>
           </div>
+          <ul>
+            <li><strong>Left skew (negative):</strong> the tail is on the left. Typically <strong>Mean &lt; Median &lt; Mode</strong>.</li>
+            <li><strong>Right skew (positive):</strong> the tail is on the right. Typically <strong>Mode &lt; Median &lt; Mean</strong>.</li>
+            <li><strong>Symmetrical:</strong> Mean ≈ Median ≈ Mode.</li>
+          </ul>
           <div id="skew-answer"></div>
           <div id="skew-chart"></div>
           <p id="skew-data" class="hint"></p>
+        </div>
+
+        <div class="card guide">
+          <h2>Percentiles</h2>
+          <ul>
+            <li data-tip="pct-find"><strong>Finding the kth percentile:</strong> sort the data and calculate the position with <span class="formula">Position = (k ÷ 100) × (n + 1)</span>.</li>
+            <li data-tip="pct-method"><strong>Interpolation:</strong> if the position is a decimal (like 4.8), the value is between the 4th and 5th numbers. Take the lower number and add the decimal part times the difference between the upper and lower numbers. Example: 46 + 0.8 × (47 − 46) = 46.8.</li>
+          </ul>
+          <p class="hint">On this tab, choose “L = (P/100)·(n + 1) — interpolate” to use that position formula.</p>
         </div>
 
         <div class="card guide">
@@ -182,6 +211,14 @@
           </table>
           <button id="wm-add" class="secondary">+ Add row</button>
           <div id="wm-result"></div>
+          <div class="guide">
+            <h3>Grouped data (population mean)</h3>
+            <ul>
+              <li data-tip="midpoint"><strong>Midpoint:</strong> for a class such as 1–6, <span class="formula">(lower limit + upper limit) ÷ 2</span>.</li>
+              <li data-tip="grouped-mean"><strong>Weighted mean of grouped data:</strong> multiply each midpoint by its frequency, add those products, and divide by the total frequency N. <span class="formula">μ = Σ(midpoint × f) ÷ N</span></li>
+            </ul>
+            <p class="hint">Enter the classes on the <button type="button" class="link-tab" data-goto="freq">Frequency Table</button> tab and the population mean is calculated under the table.</p>
+          </div>
         </div>
 
         <div class="card">
@@ -269,6 +306,7 @@
                 <option value="width">class width</option>
                 <option value="mid">midpoint (class mark)</option>
                 <option value="rel">relative frequency</option>
+                <option value="cumrel">cumulative relative frequency</option>
               </select>
             </label>
             <label id="freq-qclass-wrap">for class #
@@ -282,6 +320,18 @@
           <h2>Histogram (bars drawn at the class boundaries)</h2>
           <div id="freq-hist"></div>
         </div>
+
+        <div class="card guide">
+          <h2>Rules: summarizing data</h2>
+          <ul>
+            <li data-tip="frequency"><strong>Frequency distributions:</strong> a table of classes (ranges) and how many values fall in each class.</li>
+            <li data-tip="cum-freq"><strong>Cumulative frequency:</strong> add frequencies down the list to find the total up to a certain class.</li>
+            <li data-tip="rel-freq"><strong>Relative frequency:</strong> the proportion of the total in one class. <span class="formula">frequency ÷ total number of data points</span></li>
+            <li data-tip="cum-rel"><strong>Cumulative relative frequency:</strong> the cumulative frequency up to a class, divided by the total.</li>
+            <li data-tip="midpoint"><strong>Midpoint:</strong> <span class="formula">(lower limit + upper limit) ÷ 2</span>. The population mean of grouped data is <span class="formula">Σ(midpoint × frequency) ÷ N</span>, shown under the table.</li>
+            <li>Stem-and-leaf plots (stem = tens, leaf = ones) are on the <button type="button" class="link-tab" data-goto="stem">Stem &amp; Leaf</button> tab. Left vs. right skew is on the <button type="button" class="link-tab" data-goto="location">Location</button> tab.</li>
+          </ul>
+        </div>
       </section>
 
       <!-- ============ CV ============ -->
@@ -289,7 +339,7 @@
         <div class="card">
           <h2>Compare consistency with the Coefficient of Variation</h2>
           <p class="formula" data-tip="cv-formula">CV = ( s ÷ x̄ ) × 100%</p>
-          <p>Lower CV = more consistent / stable. Enter raw data <em>or</em> a mean and standard deviation for each group.</p>
+          <p>Use CV to compare variability between datasets with different units or very different means. Lower CV = more consistent / stable. Enter raw data <em>or</em> a mean and standard deviation for each group.</p>
           <div class="row">
             <label class="inline" data-tip="cv-round">Round CV to
               <select id="cv-round">
@@ -369,6 +419,112 @@
         <div class="card"><div id="ch-chart"></div></div>
       </section>
 
+      <!-- ============ STEM AND LEAF ============ -->
+      <section id="tab-stem" class="panel">
+        <div class="card">
+          <h2>Stem-and-leaf plot</h2>
+          <p>The <strong>leaf</strong> is the ones digit. The <strong>stem</strong> is everything to the left of it (the tens place for a two-digit number). Count the leaves to get n, then the median sits at position (n + 1) ÷ 2 in the ordered plot.</p>
+          <label for="stem-input">Whole numbers, 0 or greater:</label>
+          <textarea id="stem-input" rows="3" data-tip="stem-input">12, 15, 18, 21, 24, 27, 33, 36, 41</textarea>
+          <button id="stem-use-data" class="secondary" data-tip="use-data-loc">Use my Spread data</button>
+        </div>
+        <div id="stem-results"></div>
+        <div class="card guide">
+          <h2>How to read it</h2>
+          <ul>
+            <li data-tip="stem-leaf"><strong>Stem | Leaf.</strong> A row <code>1 | 2 5 8</code> means 12, 15, and 18.</li>
+            <li data-tip="stem-median"><strong>Median position:</strong> count every leaf to get n. Position = (n + 1) ÷ 2. If n is odd, that leaf is the median. If n is even, average the two middle leaves.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ Z-SCORE ============ -->
+      <section id="tab-zscore" class="panel">
+        <div class="card">
+          <h2>Z-score</h2>
+          <p class="formula" data-tip="zscore">z = (x − μ) ÷ s</p>
+          <p>A positive z-score is above the mean. A negative z-score is below the mean. Zero is exactly the mean.</p>
+          <div class="grid3">
+            <label data-tip="z-x">Data value (x)<input type="number" step="any" id="z-x" value="130" /></label>
+            <label data-tip="z-mean">Mean (μ)<input type="number" step="any" id="z-mean" value="100" /></label>
+            <label data-tip="z-sd">Standard deviation (s)<input type="number" step="any" id="z-sd" value="15" /></label>
+            <label class="inline" data-tip="rounding">Round z to
+              <select id="z-round">
+                <option value="2" selected>2 decimals</option>
+                <option value="3">3 decimals</option>
+                <option value="4">4 decimals</option>
+              </select>
+            </label>
+          </div>
+          <button id="z-use-data" class="secondary" data-tip="use-data">Use mean &amp; SD from my Spread data</button>
+        </div>
+        <div id="z-results"></div>
+      </section>
+
+      <!-- ============ CORRELATION ============ -->
+      <section id="tab-corr" class="panel">
+        <div class="card">
+          <h2>Correlation coefficient (r)</h2>
+          <p class="formula" data-tip="corr">r = Σ((x − x̄)(y − ȳ)) ÷ √( Σ(x − x̄)² · Σ(y − ȳ)² )</p>
+          <ul>
+            <li data-tip="corr"><strong>What it measures:</strong> the strength and direction of a linear relationship between two variables.</li>
+            <li data-tip="corr-range"><strong>Range:</strong> r is always between −1 and 1.</li>
+            <li data-tip="corr-dir"><strong>Direction:</strong> positive r means as X goes up, Y goes up. Negative r means as X goes up, Y goes down.</li>
+          </ul>
+          <div class="row">
+            <button id="corr-example" class="secondary">Load example</button>
+            <label class="inline" data-tip="rounding">Round r to
+              <select id="corr-round">
+                <option value="2" selected>2 decimals</option>
+                <option value="3">3 decimals</option>
+                <option value="4">4 decimals</option>
+              </select>
+            </label>
+          </div>
+          <div class="grid2">
+            <label data-tip="corr-x">X values<textarea id="corr-x" rows="4">1, 2, 3, 4, 5</textarea></label>
+            <label data-tip="corr-y">Y values<textarea id="corr-y" rows="4">2, 3, 5, 4, 6</textarea></label>
+          </div>
+        </div>
+        <div id="corr-results"></div>
+        <div class="card"><div id="corr-chart"></div></div>
+      </section>
+
+      <!-- ============ LEVELS ============ -->
+      <section id="tab-levels" class="panel">
+        <div class="card guide">
+          <h2>Levels of measurement</h2>
+          <p>Classify each variable into one of these four levels.</p>
+          <table>
+            <thead><tr><th>Level</th><th>Rule</th><th>Examples</th></tr></thead>
+            <tbody>
+              <tr data-tip="level-nominal"><td><strong>Nominal</strong></td><td>Categories with no order</td><td>Eye color, types of cars</td></tr>
+              <tr data-tip="level-ordinal"><td><strong>Ordinal</strong></td><td>Categories with a meaningful order, but differences are meaningless</td><td>Letter grades A, B, C; rankings</td></tr>
+              <tr data-tip="level-interval"><td><strong>Interval</strong></td><td>Ordered, with meaningful differences, but <strong>no true zero</strong></td><td>Temperature in Celsius, years on a calendar</td></tr>
+              <tr data-tip="level-ratio"><td><strong>Ratio</strong></td><td>Ordered, with meaningful differences, and a <strong>true zero</strong></td><td>Height, weight, income, age</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h2>Classify an example</h2>
+          <label data-tip="level-pick">Variable
+            <select id="level-example">
+              <option value="eye">Eye color</option>
+              <option value="cars">Types of cars</option>
+              <option value="grades">Letter grades A, B, C</option>
+              <option value="rank">Rankings (1st, 2nd, 3rd)</option>
+              <option value="celsius">Temperature in Celsius</option>
+              <option value="years">Years on a calendar</option>
+              <option value="height">Height</option>
+              <option value="weight">Weight</option>
+              <option value="income">Income</option>
+              <option value="age">Age</option>
+            </select>
+          </label>
+          <div id="level-answer"></div>
+        </div>
+      </section>
+
       <!-- ============ GUIDE ============ -->
       <section id="tab-guide" class="panel">
         <div class="card guide">
@@ -417,6 +573,7 @@
             <li data-tip="midpoint"><strong>Midpoint</strong> = (lower limit + upper limit) ÷ 2.</li>
             <li data-tip="cum-freq"><strong>Cumulative frequency</strong> = this class's frequency plus all classes before it (12 + 3 + 4 = 19).</li>
             <li data-tip="rel-freq"><strong>Relative frequency</strong> = class frequency ÷ total frequency.</li>
+            <li data-tip="cum-rel"><strong>Cumulative relative frequency</strong> = cumulative frequency up to that class ÷ total frequency.</li>
           </ul>
 
           <h2>Rounding rule (variance / standard deviation)</h2>
@@ -430,12 +587,20 @@
               <tr data-tip="cv"><td>“Which is more consistent?”</td><td>Coefficient of Variation — smaller wins</td></tr>
             </tbody>
           </table>
+          <h2>Study tips</h2>
+          <ul>
+            <li data-tip="calc-tip"><strong>Get a good calculator.</strong> A statistical calculator (TI-30X or TI-84) saves time on variance, standard deviation, and correlation. Learn how to enter data into lists and run 1-Var Stats or LinReg.</li>
+            <li data-tip="rounding"><strong>Watch your rounding.</strong> Instructions often say “round to two decimal places.” Do not round until the very last step. If the problem does not say, this app’s default is one more decimal place than the original data.</li>
+            <li data-tip="kind-sample"><strong>Sample vs. population.</strong> If it says “sample,” use n − 1 for variance. If it says “population,” use N.</li>
+          </ul>
           <h2>Test-taking checklist</h2>
           <ol>
-            <li>Sample or population? Variance or standard deviation? (Variance is squared.)</li>
+            <li>Sample or population? Variance or standard deviation? (Variance is squared. Sample variance divides by n − 1; population variance divides by N.)</li>
             <li>Bell-shaped (Empirical) or any shape (Chebyshev)?</li>
-            <li>Check rounding instructions — count decimals in the original data first.</li>
+            <li>Check rounding instructions — often two decimal places — and round only the final answer.</li>
             <li>For consistency questions, compute CV for both groups; the smaller CV is more consistent.</li>
+            <li>Skew: left tail means Mean &lt; Median &lt; Mode; right tail means Mode &lt; Median &lt; Mean.</li>
+            <li>Levels: no order → nominal; order only → ordinal; differences but no true zero → interval; true zero → ratio.</li>
           </ol>
         </div>
       </section>

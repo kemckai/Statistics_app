@@ -209,6 +209,7 @@
         midpoint: (c.lower + c.upper) / 2,
         relFreq: total ? c.freq / total : NaN,
         cumFreq: cum,
+        cumRelFreq: total ? cum / total : NaN,
       };
     });
     const widths = classes.slice(1).map((c, i) => c.lower - classes[i].lower);
@@ -349,6 +350,77 @@
     return { window, total: sum(window), value: sum(window) / k };
   }
 
+  /**
+   * Population mean of grouped data: each class is represented by its midpoint,
+   * weighted by its frequency. μ = Σ(midpoint × f) ÷ N.
+   */
+  function groupedMean(rows) {
+    if (!rows.length) throw new Error("Add at least one class.");
+    for (const [i, r] of rows.entries()) {
+      if (![r.midpoint, r.freq].every(Number.isFinite)) throw new Error(`Class ${i + 1} needs a midpoint and a frequency.`);
+      if (r.freq < 0) throw new Error(`Class ${i + 1}: frequency can't be negative.`);
+    }
+    const products = rows.map((r) => r.midpoint * r.freq);
+    const sumMF = sum(products);
+    const N = sum(rows.map((r) => r.freq));
+    if (N === 0) throw new Error("Total frequency is 0.");
+    return { products, sumMF, N, mean: sumMF / N };
+  }
+
+  /**
+   * Pearson correlation. r = Σ((x − x̄)(y − ȳ)) / √(Σ(x − x̄)² · Σ(y − ȳ)²).
+   * Always between −1 and 1.
+   */
+  function correlation(xs, ys) {
+    if (xs.length !== ys.length) throw new Error("X and Y must have the same number of values.");
+    if (xs.length < 2) throw new Error("Enter at least two pairs.");
+    const n = xs.length;
+    const mx = mean(xs);
+    const my = mean(ys);
+    let sxy = 0;
+    let sxx = 0;
+    let syy = 0;
+    const rows = [];
+    for (let i = 0; i < n; i++) {
+      const dx = xs[i] - mx;
+      const dy = ys[i] - my;
+      const prod = dx * dy;
+      sxy += prod;
+      sxx += dx * dx;
+      syy += dy * dy;
+      rows.push({ x: xs[i], y: ys[i], dx, dy, prod });
+    }
+    if (sxx === 0 || syy === 0) throw new Error("Correlation is undefined when X or Y does not vary.");
+    const r = sxy / Math.sqrt(sxx * syy);
+    const direction = r > 0 ? "positive" : r < 0 ? "negative" : "none";
+    return { n, mx, my, sxy, sxx, syy, r, rows, direction };
+  }
+
+  /**
+   * Stem-and-leaf for whole numbers ≥ 0.
+   * Leaf = ones digit. Stem = the rest (tens place, or tens and higher).
+   */
+  function stemAndLeaf(values) {
+    if (!values.length) throw new Error("Enter at least one number.");
+    if (!values.every((v) => Number.isInteger(v) && v >= 0)) {
+      throw new Error("Use whole numbers that are 0 or greater. The leaf is the ones digit and the stem is everything to its left.");
+    }
+    const groups = new Map();
+    for (const v of values) {
+      const stem = Math.floor(v / 10);
+      const leaf = v % 10;
+      if (!groups.has(stem)) groups.set(stem, []);
+      groups.get(stem).push(leaf);
+    }
+    const present = [...groups.keys()];
+    const rows = [];
+    for (let stem = Math.min(...present); stem <= Math.max(...present); stem++) {
+      rows.push({ stem, leaves: (groups.get(stem) || []).slice().sort((a, b) => a - b) });
+    }
+    const n = values.length;
+    return { rows, n, sorted: sortAsc(values), medianPos: (n + 1) / 2 };
+  }
+
   /** Missing value when the mean of all n values is known. */
   function missingValue(m, n, known) {
     if (!(Number.isInteger(n) && n > known.length)) throw new Error("Total count must be larger than the number of known values.");
@@ -369,6 +441,9 @@
     midrange,
     winsorize,
     weightedMean,
+    groupedMean,
+    correlation,
+    stemAndLeaf,
     movingAverage,
     missingValue,
     frequencyTable,

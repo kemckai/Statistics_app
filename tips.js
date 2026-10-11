@@ -252,7 +252,7 @@
     },
     "skew-shape": {
       title: "Mean, median and mode by shape",
-      body: "<ul><li><b>Symmetric</b>: mean = median = mode (center).</li><li><b>Skewed right</b> (tail right): Mode → Median → Mean, left to right.</li><li><b>Skewed left</b> (tail left): Mean → Median → Mode.</li></ul>The mean is always pulled toward the tail; the mode is at the peak.",
+      body: "<ul><li><b>Left skew (negative)</b>: tail on the left. Typically <b>Mean &lt; Median &lt; Mode</b>.</li><li><b>Right skew (positive)</b>: tail on the right. Typically <b>Mode &lt; Median &lt; Mean</b>.</li><li><b>Symmetrical</b>: Mean ≈ Median ≈ Mode.</li></ul>The mean is pulled toward the tail; the mode is at the peak.",
     },
     "skew-letters": {
       title: "Letters on your graph",
@@ -336,7 +336,73 @@
     },
     "rel-freq": {
       title: "Relative frequency",
-      body: "The class's share of all the data:<div class='f'>relative f = f ÷ n</div>Relative frequencies add up to 1 (100%).",
+      body: "The proportion of the total that falls in one class:<div class='f'>relative frequency = frequency ÷ total number of data points</div>Relative frequencies add up to 1 (100%).",
+    },
+    "cum-rel": {
+      title: "Cumulative relative frequency",
+      body: "Combine cumulative frequency and relative frequency.<div class='f'>cumulative relative frequency = cumulative frequency ÷ total</div>The last class is always 1.",
+    },
+    "grouped-mean": {
+      title: "Population mean of grouped data",
+      body: "<ol><li>Midpoint = (lower limit + upper limit) ÷ 2.</li><li>Multiply each midpoint by its frequency.</li><li>Add those products.</li><li>Divide by the total frequency N.</li></ol><div class='f'>μ = Σ(midpoint × f) ÷ N</div>",
+    },
+    "stem-input": {
+      title: "Stem-and-leaf data",
+      body: "Enter whole numbers that are 0 or greater. The ones digit becomes the leaf; everything to its left is the stem.",
+    },
+    "stem-leaf": {
+      title: "Stem and leaf",
+      body: "Stem = tens place (and higher). Leaf = ones place.<div class='f'>1 | 2 5 8 means 12, 15, 18</div>Count the leaves to get the number of data points.",
+    },
+    "stem-median": {
+      title: "Median from a stem-and-leaf plot",
+      body: "Count every leaf to get n. The median is at position<div class='f'>(n + 1) ÷ 2</div>Odd n: that exact leaf. Even n: average the two middle values.",
+    },
+    zscore: {
+      title: "Z-score",
+      body: "How many standard deviations a value is from the mean.<div class='f'>z = (x − μ) ÷ s</div>Positive = above the mean. Negative = below the mean.",
+    },
+    "z-x": { title: "Data value (x)", body: "The single number you are locating relative to the mean." },
+    "z-mean": { title: "Mean (μ)", body: "The average of the distribution. Subtract it from x." },
+    "z-sd": { title: "Standard deviation (s)", body: "Divide (x − mean) by this. It must be positive." },
+    corr: {
+      title: "Correlation coefficient (r)",
+      body: "Strength and direction of a linear relationship.<div class='f'>r = Σ((x − x̄)(y − ȳ)) ÷ √(Σ(x − x̄)² · Σ(y − ȳ)²)</div>You can also get r from a calculator's LinReg.",
+    },
+    "corr-range": {
+      title: "Range of r",
+      body: "r is always between −1 and 1. −1 is a perfect downward line. 1 is a perfect upward line. 0 is no linear relationship.",
+    },
+    "corr-dir": {
+      title: "Direction",
+      body: "<b>Positive r:</b> as X goes up, Y goes up.<br><b>Negative r:</b> as X goes up, Y goes down.",
+    },
+    "corr-x": { title: "X values", body: "One number per pair, in the same order as Y." },
+    "corr-y": { title: "Y values", body: "One number per pair, in the same order as X. The two lists must be the same length." },
+    "corr-point": { title: "Paired point", body: "One (x, y) pair. A line sloping up is positive correlation; sloping down is negative." },
+    "level-nominal": {
+      title: "Nominal",
+      body: "Categories with no order. Examples: eye color, types of cars.",
+    },
+    "level-ordinal": {
+      title: "Ordinal",
+      body: "Categories with a meaningful order, but differences are meaningless. Examples: letter grades A, B, C; rankings.",
+    },
+    "level-interval": {
+      title: "Interval",
+      body: "Ordered, with meaningful differences, but <b>no true zero</b>. Examples: temperature in Celsius, years on a calendar.",
+    },
+    "level-ratio": {
+      title: "Ratio",
+      body: "Ordered, with meaningful differences, and a <b>true zero</b>. Examples: height, weight, income, age.",
+    },
+    "level-pick": {
+      title: "Classify the variable",
+      body: "Ask, in order: Is there an order? If not, nominal. Is a difference meaningful? If not, ordinal. Is there a true zero? If not, interval. If yes, ratio.",
+    },
+    "calc-tip": {
+      title: "Calculator",
+      body: "On a TI-30X or TI-84, enter the numbers in a list, then run 1-Var Stats (mean, variance, standard deviation) or LinReg (correlation r).",
     },
     "total-freq": {
       title: "Total (n)",

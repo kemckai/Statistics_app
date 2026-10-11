@@ -198,3 +198,45 @@ test("missing 6th charge = 47.12", () => {
 test("chebyshev bounds", () => {
   assert.deepEqual(Stats.chebyshevBounds(50, 5, 3), { lower: 35, upper: 65 });
 });
+
+test("cumulative relative frequency is cumulative frequency ÷ total", () => {
+  const t = Stats.frequencyTable(TV);
+  assert.equal(t.rows[2].cumFreq, 19);
+  close(t.rows[2].cumRelFreq, 19 / 36);
+  close(t.rows[t.rows.length - 1].cumRelFreq, 1);
+});
+
+test("grouped population mean uses midpoints × frequency", () => {
+  const t = Stats.frequencyTable(SCORES);
+  const g = Stats.groupedMean(t.rows);
+  assert.equal(g.N, 42);
+  close(g.sumMF, 3183);
+  close(g.mean, 3183 / 42);
+});
+
+test("correlation of a perfect positive line is 1, and direction flips when Y is reversed", () => {
+  const up = Stats.correlation([1, 2, 3, 4], [2, 4, 6, 8]);
+  close(up.r, 1);
+  assert.equal(up.direction, "positive");
+  const down = Stats.correlation([1, 2, 3, 4], [8, 6, 4, 2]);
+  close(down.r, -1);
+  assert.equal(down.direction, "negative");
+  const mixed = Stats.correlation([1, 2, 3, 4, 5], [2, 3, 5, 4, 6]);
+  close(mixed.r, 0.9);
+  assert.throws(() => Stats.correlation([1, 1, 1], [2, 3, 4]));
+});
+
+test("stem-and-leaf: leaf is the ones digit, median position is (n+1)/2", () => {
+  const s = Stats.stemAndLeaf([12, 15, 18, 21, 24, 27, 33]);
+  assert.equal(s.n, 7);
+  assert.equal(s.medianPos, 4);
+  assert.deepEqual(s.rows[0], { stem: 1, leaves: [2, 5, 8] });
+  assert.deepEqual(s.rows[1], { stem: 2, leaves: [1, 4, 7] });
+  assert.deepEqual(s.rows[2], { stem: 3, leaves: [3] });
+  assert.throws(() => Stats.stemAndLeaf([1.5]));
+});
+
+test("z-score is (x − mean) ÷ sd", () => {
+  close(Stats.zScore(130, 100, 15), 2);
+  close(Stats.zScore(85, 100, 15), -1);
+});

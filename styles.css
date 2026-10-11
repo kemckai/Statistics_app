@@ -99,6 +99,9 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent-soft
 }
 .file-btn:hover, button.secondary:hover { background: #bfdbfe; }
 button.link { background: none; border: none; color: var(--err); cursor: pointer; padding: 4px 0; font: inherit; font-size: 0.85rem; }
+button.link-tab { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0; font: inherit; font-weight: 600; text-decoration: underline; }
+.stem-plot td:first-child { text-align: right; font-weight: 700; font-family: ui-monospace, Menlo, monospace; }
+.stem-plot td.leaf { text-align: left; font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.12em; }
 
 .chips { display: inline-flex; gap: 6px; align-items: center; font-size: 0.85rem; color: var(--muted); flex-wrap: wrap; }
 .chip { border: 1px solid var(--border); background: white; border-radius: 999px; padding: 4px 10px; cursor: pointer; font: inherit; font-size: 0.85rem; }

@@ -16,6 +16,12 @@
       document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === `tab-${btn.dataset.tab}`));
     });
   });
+  document.querySelectorAll("[data-goto]").forEach((el) => {
+    el.addEventListener("click", () => {
+      const tab = document.querySelector(`.tab[data-tab="${el.dataset.goto}"]`);
+      if (tab) tab.click();
+    });
+  });
 
   function tipAttrs(key, calc) {
     return ` data-tip="${key}"${calc ? ` data-tip-calc="${esc(calc)}"` : ""}`;
@@ -366,13 +372,13 @@
     let order, text;
     if (shape === "right") {
       order = ["Mode", "Median", "Mean"];
-      text = "Tail on the right: the mode is at the peak (farthest left), the median is in the middle, and the mean is pulled toward the tail (farthest right).";
+      text = "Right skew (positive): the tail is on the right. Typically Mode < Median < Mean. The mode is at the peak (farthest left) and the mean is pulled toward the tail.";
     } else if (shape === "left") {
       order = ["Mean", "Median", "Mode"];
-      text = "Tail on the left: the mean is pulled toward the tail (farthest left), the median is in the middle, and the mode is at the peak (farthest right).";
+      text = "Left skew (negative): the tail is on the left. Typically Mean < Median < Mode. The mean is pulled toward the tail and the mode is at the peak (farthest right).";
     } else {
       order = ["Mean = Median = Mode", "", ""];
-      text = "Symmetric: mean, median and mode are all at the center peak — the middle letter.";
+      text = "Symmetrical: Mean ≈ Median ≈ Mode. All three sit at the center peak — the middle letter.";
     }
     const rows =
       shape === "sym"
@@ -594,6 +600,22 @@
     return n + (s[(v - 20) % 10] || s[v] || s[0]);
   }
 
+  function groupedMeanHtml(t) {
+    const g = Stats.groupedMean(t.rows);
+    const lines = t.rows
+      .map((r, i) => `<li>${ordinal(r.index)} class: midpoint ${n6(r.midpoint)} × frequency ${n6(r.freq)} = ${n6(g.products[i])}</li>`)
+      .join("");
+    return `
+      <h3 data-tip="grouped-mean">Population mean of this grouped data</h3>
+      <p class="formula">μ = Σ(midpoint × frequency) ÷ N</p>
+      <ol class="steps">
+        ${lines}
+        <li>Add the products → Σ(midpoint × f) = ${t.rows.map((_, i) => n6(g.products[i])).join(" + ")} = <b>${n6(g.sumMF)}</b></li>
+        <li>Divide by the total frequency → ${n6(g.sumMF)} ÷ ${n6(g.N)} = <b>${Stats.fmt(g.mean, 2)}</b></li>
+      </ol>
+      <p class="answer">μ = ${Stats.fmt(g.mean, 2)}</p>`;
+  }
+
   function renderFreq() {
     const trs = [...$("freq-rows").querySelectorAll("tr")];
     trs.forEach((tr, i) => (tr.querySelector(".cls-num").textContent = ordinal(i + 1)));
@@ -622,6 +644,7 @@
             <td${tipAttrs("midpoint", `(${n6(r.lower)} + ${n6(r.upper)}) ÷ 2 = ${n6(r.midpoint)}`)}>${n6(r.midpoint)}</td>
             <td${tipAttrs("rel-freq", `${n6(r.freq)} ÷ ${n6(t.total)} = ${Stats.fmt(r.relFreq, 4)} (${Stats.fmt(r.relFreq * 100, 2)}%)`)}>${Stats.fmt(r.relFreq, 4)}</td>
             <td${tipAttrs("cum-freq", i === 0 ? `${r.freq} (first class)` : `${prevCum} + ${r.freq} = ${r.cumFreq}\n(${cumCalc})`)}>${n6(r.cumFreq)}</td>
+            <td${tipAttrs("cum-rel", `${n6(r.cumFreq)} ÷ ${n6(t.total)} = ${Stats.fmt(r.cumRelFreq, 4)}`)}>${Stats.fmt(r.cumRelFreq, 4)}</td>
           </tr>`;
         })
         .join("");
@@ -654,11 +677,13 @@
               <th${tipAttrs("midpoint")}>Midpoint</th>
               <th${tipAttrs("rel-freq")}>Relative freq.</th>
               <th${tipAttrs("cum-freq")}>Cumulative freq.</th>
+              <th${tipAttrs("cum-rel")}>Cumulative relative freq.</th>
             </tr></thead>
             <tbody>${rows}</tbody>
-            <tfoot><tr${tipAttrs("total-freq")}><td colspan="2">Total</td><td>${n6(t.total)}</td><td colspan="3"></td><td>1.0000</td><td></td></tr></tfoot>
+            <tfoot><tr${tipAttrs("total-freq")}><td colspan="2">Total</td><td>${n6(t.total)}</td><td colspan="3"></td><td>1.0000</td><td></td><td>1.0000</td></tr></tfoot>
           </table>
           </div>
+          ${groupedMeanHtml(t)}
           ${warnings.map((w) => `<p class="warning">${esc(w)}</p>`).join("")}
         </div>`;
 
@@ -745,6 +770,14 @@
       steps.push(`Add the lower and upper limits → ${n6(r.lower)} + ${n6(r.upper)} = ${n6(r.lower + r.upper)}`);
       steps.push(`Divide by 2 → ${n6(r.lower + r.upper)} ÷ 2 = <b>${n6(r.midpoint)}</b>`);
       answer = n6(r.midpoint);
+    } else if (q === "cumrel") {
+      question = `Cumulative relative frequency of the ${name}`;
+      tip = "cum-rel";
+      const cumParts = t.rows.slice(0, i + 1).map((x) => n6(x.freq)).join(" + ");
+      steps.push(`Cumulative frequency up to this class = ${cumParts} = <b>${n6(r.cumFreq)}</b>`);
+      steps.push(`Total number of data points = ${n6(t.total)}`);
+      steps.push(`Divide → ${n6(r.cumFreq)} ÷ ${n6(t.total)} = <b>${Stats.fmt(r.cumRelFreq, 4)}</b>`);
+      answer = Stats.fmt(r.cumRelFreq, 4);
     } else {
       question = `Relative frequency of the ${name}`;
       tip = "rel-freq";
@@ -1029,6 +1062,155 @@
   );
   $("ch-use-data").addEventListener("click", () => useSpreadData("ch-mean", "ch-sd", renderChebyshev));
 
+  // ---------------- Stem and leaf ----------------
+  function renderStem() {
+    const parsed = Stats.parseData($("stem-input").value);
+    const out = $("stem-results");
+    try {
+      const s = Stats.stemAndLeaf(parsed.values);
+      const med = Stats.medianSteps(parsed.values);
+      const plot = s.rows
+        .map((r) => `<tr data-tip="stem-leaf"><td>${r.stem}</td><td class="leaf">${r.leaves.join(" ") || ""}</td></tr>`)
+        .join("");
+      const posNote = Number.isInteger(s.medianPos)
+        ? `the ${ordinal(s.medianPos)} value in order`
+        : `halfway between the ${ordinal(Math.floor(s.medianPos))} and ${ordinal(Math.ceil(s.medianPos))} values`;
+      out.innerHTML = `
+        <div class="card">
+          <div class="table-scroll">
+            <table class="stem-plot">
+              <thead><tr><th data-tip="stem-leaf">Stem</th><th data-tip="stem-leaf">Leaf</th></tr></thead>
+              <tbody>${plot}</tbody>
+            </table>
+          </div>
+          <p class="hint">Key: <strong>1 | 2</strong> means 12. Each leaf is one data point, so n = ${s.n}.</p>
+          ${parsed.invalid.length ? `<p class="warning">Ignored non-numeric entries: ${esc(parsed.invalid.slice(0, 8).join(", "))}</p>` : ""}
+          <ol class="steps">
+            <li data-tip="stem-median">Count the leaves → n = <b>${s.n}</b></li>
+            <li data-tip="stem-median">Median position = (n + 1) ÷ 2 = (${s.n} + 1) ÷ 2 = <b>${n6(s.medianPos)}</b> (${posNote})</li>
+            <li>Ordered values: ${s.sorted.join(", ")}</li>
+            <li>Median = <b>${n6(med.median)}</b></li>
+          </ol>
+        </div>`;
+    } catch (e) {
+      out.innerHTML = `<div class="card error">${esc(e.message)}</div>`;
+    }
+  }
+  $("stem-input").addEventListener("input", renderStem);
+  $("stem-use-data").addEventListener("click", () => {
+    $("stem-input").value = $("data-input").value;
+    renderStem();
+  });
+
+  // ---------------- Z-score ----------------
+  function renderZ() {
+    const out = $("z-results");
+    const x = parseFloat($("z-x").value);
+    const m = parseFloat($("z-mean").value);
+    const sd = parseFloat($("z-sd").value);
+    const places = Number($("z-round").value);
+    try {
+      if (![x, m, sd].every(Number.isFinite)) throw new Error("Enter a data value, a mean, and a standard deviation.");
+      if (!(sd > 0)) throw new Error("Standard deviation must be positive.");
+      const z = Stats.zScore(x, m, sd);
+      const sign = z > 0 ? "positive" : z < 0 ? "negative" : "zero";
+      const where = z > 0 ? "above the mean" : z < 0 ? "below the mean" : "exactly at the mean";
+      out.innerHTML = `
+        <div class="card">
+          <p class="answer big" data-tip="zscore" data-tip-calc="${n6(x)} − ${n6(m)} = ${n6(x - m)}\n${n6(x - m)} ÷ ${n6(sd)} = ${Stats.fmt(z, places)}">z = ${Stats.fmt(z, places)}</p>
+          <ol class="steps">
+            <li>Subtract the mean from the data value → ${n6(x)} − ${n6(m)} = <b>${n6(x - m)}</b></li>
+            <li>Divide by the standard deviation → ${n6(x - m)} ÷ ${n6(sd)} = <b>${Stats.fmt(z, places)}</b></li>
+            <li>A <b>${sign}</b> z-score means this value is <b>${where}</b>.</li>
+          </ol>
+        </div>`;
+    } catch (e) {
+      out.innerHTML = `<div class="card error">${esc(e.message)}</div>`;
+    }
+  }
+  ["z-x", "z-mean", "z-sd"].forEach((id) => $(id).addEventListener("input", renderZ));
+  $("z-round").addEventListener("change", renderZ);
+  $("z-use-data").addEventListener("click", () => useSpreadData("z-mean", "z-sd", renderZ));
+
+  // ---------------- Correlation ----------------
+  function renderCorr() {
+    const xs = Stats.parseData($("corr-x").value);
+    const ys = Stats.parseData($("corr-y").value);
+    const places = Number($("corr-round").value);
+    const out = $("corr-results");
+    try {
+      const ignored = [...xs.invalid, ...ys.invalid];
+      if (ignored.length) throw new Error(`Non-numeric entries: ${ignored.slice(0, 6).join(", ")}`);
+      const c = Stats.correlation(xs.values, ys.values);
+      const rows = c.rows
+        .map(
+          (r) => `<tr>
+            <td>${n6(r.x)}</td><td>${n6(r.y)}</td>
+            <td>${Stats.fmt(r.dx, places + 2)}</td><td>${Stats.fmt(r.dy, places + 2)}</td>
+            <td>${Stats.fmt(r.prod, places + 2)}</td>
+          </tr>`
+        )
+        .join("");
+      const dir =
+        c.direction === "positive"
+          ? "Positive r: as X goes up, Y goes up."
+          : c.direction === "negative"
+            ? "Negative r: as X goes up, Y goes down."
+            : "r = 0: no linear association in this calculation.";
+      out.innerHTML = `
+        <div class="card">
+          <div class="stats-grid">
+            ${stat("Correlation r", "−1 to 1", Stats.fmt(c.r, places), c.direction, "corr", `Σ((x−x̄)(y−ȳ)) = ${Stats.fmt(c.sxy, places + 2)}\n√(Σ(x−x̄)² · Σ(y−ȳ)²) = ${Stats.fmt(Math.sqrt(c.sxx * c.syy), places + 2)}\nr = ${Stats.fmt(c.r, places)}`)}
+          </div>
+          <p class="answer">${dir}</p>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>x</th><th>y</th><th>x − x̄</th><th>y − ȳ</th><th>(x − x̄)(y − ȳ)</th></tr></thead>
+              <tbody>${rows}</tbody>
+              <tfoot><tr><td colspan="4">Sum of products</td><td>${Stats.fmt(c.sxy, places + 2)}</td></tr></tfoot>
+            </table>
+          </div>
+          <ol class="steps">
+            <li>Means: x̄ = ${Stats.fmt(c.mx, places + 2)}, ȳ = ${Stats.fmt(c.my, places + 2)}</li>
+            <li>Σ((x − x̄)(y − ȳ)) = <b>${Stats.fmt(c.sxy, places + 2)}</b></li>
+            <li>Σ(x − x̄)² = ${Stats.fmt(c.sxx, places + 2)}, Σ(y − ȳ)² = ${Stats.fmt(c.syy, places + 2)}</li>
+            <li>r = ${Stats.fmt(c.sxy, places + 2)} ÷ √(${Stats.fmt(c.sxx, places + 2)} × ${Stats.fmt(c.syy, places + 2)}) = <b>${Stats.fmt(c.r, places)}</b></li>
+          </ol>
+        </div>`;
+      $("corr-chart").innerHTML = Charts.scatter(c.rows);
+    } catch (e) {
+      out.innerHTML = `<div class="card error">${esc(e.message)}</div>`;
+      $("corr-chart").innerHTML = "";
+    }
+  }
+  $("corr-x").addEventListener("input", renderCorr);
+  $("corr-y").addEventListener("input", renderCorr);
+  $("corr-round").addEventListener("change", renderCorr);
+  $("corr-example").addEventListener("click", () => {
+    $("corr-x").value = "1, 2, 3, 4, 5";
+    $("corr-y").value = "2, 3, 5, 4, 6";
+    renderCorr();
+  });
+
+  // ---------------- Levels of measurement ----------------
+  const LEVELS = {
+    eye: ["Nominal", "Eye color is a category with no order. One color is not greater than another."],
+    cars: ["Nominal", "Types of cars are names. Listing them does not put them in a meaningful order."],
+    grades: ["Ordinal", "A, B, and C have an order, but the difference between A and B is not a measured amount."],
+    rank: ["Ordinal", "1st, 2nd, and 3rd are ordered, but the gap between ranks is not a fixed size."],
+    celsius: ["Interval", "Celsius is ordered and equal gaps mean the same thing, but 0°C is not “no temperature.”"],
+    years: ["Interval", "Calendar years are ordered and differences are meaningful, but year 0 is not the absence of time."],
+    height: ["Ratio", "Height is ordered, differences are meaningful, and 0 means no height — a true zero."],
+    weight: ["Ratio", "Weight is ordered, differences are meaningful, and 0 means no weight."],
+    income: ["Ratio", "Income is ordered, a dollar difference is meaningful, and $0 means no income."],
+    age: ["Ratio", "Age is ordered, differences are meaningful, and 0 is a true starting point."],
+  };
+  function renderLevel() {
+    const [level, why] = LEVELS[$("level-example").value];
+    $("level-answer").innerHTML = `<p class="answer big">${level}</p><p>${why}</p>`;
+  }
+  $("level-example").addEventListener("change", renderLevel);
+
   renderSpread();
   renderLocation();
   renderSkew();
@@ -1036,4 +1218,8 @@
   renderCv();
   renderEmpirical();
   renderChebyshev();
+  renderStem();
+  renderZ();
+  renderCorr();
+  renderLevel();
 })();
