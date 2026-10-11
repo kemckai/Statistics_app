@@ -23,6 +23,7 @@
         <button class="tab" data-tab="zscore">Z-Score</button>
         <button class="tab" data-tab="corr">Correlation</button>
         <button class="tab" data-tab="levels">Levels</button>
+        <button class="tab" data-tab="mnemonics">Mnemonics</button>
         <button class="tab" data-tab="guide">Study Guide</button>
       </nav>
     </header>
@@ -525,6 +526,25 @@
         </div>
       </section>
 
+      <!-- ============ MNEMONICS ============ -->
+      <section id="tab-mnemonics" class="panel">
+        <div class="card">
+          <h2>Which mnemonic do I need?</h2>
+          <p class="hint">Each mnemonic has <strong>trigger words</strong>. Spot them in a question and you know which formula to use.</p>
+          <label data-tip="mn-finder">Paste a test question
+            <textarea id="mn-question" rows="3" placeholder="e.g. Find the 40th percentile of the following data…"></textarea>
+          </label>
+          <div id="mn-result"></div>
+        </div>
+
+        <div class="card" data-tip="mn-cheat">
+          <h2>Summary cheat sheet</h2>
+          <table class="mn-cheat-table"><tbody id="mn-cheat"></tbody></table>
+        </div>
+
+        <div id="mn-cards" class="mn-grid"></div>
+      </section>
+
       <!-- ============ GUIDE ============ -->
       <section id="tab-guide" class="panel">
         <div class="card guide">
@@ -602,6 +622,7 @@
             <li>Skew: left tail means Mean &lt; Median &lt; Mode; right tail means Mode &lt; Median &lt; Mean.</li>
             <li>Levels: no order → nominal; order only → ordinal; differences but no true zero → interval; true zero → ratio.</li>
           </ol>
+          <p>Can't remember a formula? See the <button type="button" class="link-tab" data-goto="mnemonics">Mnemonics</button> tab for memory phrases and their trigger words.</p>
         </div>
       </section>
     </main>
@@ -610,5 +631,6 @@
     <script src="charts.js"></script>
     <script src="tips.js"></script>
     <script src="app.js"></script>
+    <script src="mnemonics.js"></script>
   </body>
 </html>

@@ -100,6 +100,22 @@ textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent-soft
 .file-btn:hover, button.secondary:hover { background: #bfdbfe; }
 button.link { background: none; border: none; color: var(--err); cursor: pointer; padding: 4px 0; font: inherit; font-size: 0.85rem; }
 button.link-tab { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0; font: inherit; font-weight: 600; text-decoration: underline; }
+.mn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap: 16px; }
+.mn-grid .card { margin-bottom: 0; scroll-margin-top: 16px; transition: box-shadow 0.3s; }
+.mn-card.flash { box-shadow: 0 0 0 3px var(--accent); }
+.mn-letters { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+.mn-letter { display: flex; flex-direction: column; align-items: center; background: var(--accent-soft); border-radius: 8px; padding: 6px 10px; min-width: 64px; }
+.mn-letter b { font-size: 1.05rem; color: #1e3a8a; }
+.mn-letter b::first-letter { font-size: 1.3rem; color: var(--accent); }
+.mn-letter small { color: var(--muted); font-size: 0.78rem; text-align: center; }
+.chip.static { cursor: inherit; display: inline-block; margin: 2px 0; }
+.chip.static:hover { border-color: var(--border); color: inherit; }
+.mn-match { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-top: 10px; }
+.mn-match.best { border-color: var(--accent); background: var(--accent-soft); }
+.mn-formula { font-family: ui-monospace, Menlo, monospace; margin-top: 4px; }
+.mn-cheat-table td { text-align: left; }
+.mn-cheat-table a { color: var(--accent); }
+#mn-question { margin-top: 4px; }
 .stem-plot td:first-child { text-align: right; font-weight: 700; font-family: ui-monospace, Menlo, monospace; }
 .stem-plot td.leaf { text-align: left; font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.12em; }
 

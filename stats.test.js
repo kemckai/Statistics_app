@@ -240,3 +240,19 @@ test("z-score is (x − mean) ÷ sd", () => {
   close(Stats.zScore(130, 100, 15), 2);
   close(Stats.zScore(85, 100, 15), -1);
 });
+
+test("mnemonic finder picks the mnemonic from a question's trigger words", () => {
+  const { findMnemonics, MNEMONICS } = require("./mnemonics.js");
+  const best = (q) => findMnemonics(q)[0]?.mnemonic.id;
+  assert.equal(MNEMONICS.length, 9);
+  assert.equal(best("What is the level of measurement for Eye Color?"), "noir");
+  assert.equal(best("Find the sample standard deviation of 12, 16, 16, 17"), "variance");
+  assert.equal(best("Use the coefficient of variation to compare variability of the two datasets"), "cv");
+  assert.equal(best("Find the z-score for x = 82 with mean 75 and standard deviation 5"), "zscore");
+  assert.equal(best("Find the 40th percentile of the data"), "percentile");
+  assert.equal(best("The distribution is skewed to the right. Which is larger, mean or median?"), "skew-right");
+  assert.equal(best("A negatively skewed distribution has which order?"), "skew-left");
+  assert.equal(best("Find the cumulative relative frequency for the third class"), "cumrel");
+  assert.equal(best("Estimate the mean of the grouped data in the table"), "grouped");
+  assert.deepEqual(findMnemonics("hello world"), []);
+});

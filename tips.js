@@ -421,6 +421,23 @@
       body: "Each bar spans from the class's lower boundary to its upper boundary (so bars touch), and its height is the class frequency.",
     },
 
+    "mn-finder": {
+      title: "Which mnemonic?",
+      body: "Paste a test question. Its trigger words (like “percentile,” “skewed,” “z-score,” or “cumulative”) are matched to the mnemonic and formula you need. The best match is listed first.",
+    },
+    "mn-letters": {
+      title: "Decode the phrase",
+      body: "Each word of the phrase stands for one step or symbol in the formula. Say the phrase, then write down the step for each word in order.",
+    },
+    "mn-triggers": {
+      title: "Trigger words",
+      body: "If you see any of these words or phrases in a question, this is the mnemonic to use.",
+    },
+    "mn-cheat": {
+      title: "Summary cheat sheet",
+      body: "Look at what the question gives you (raw list, table with ranges, two datasets, one x value) and what it asks for, then pick the matching mnemonic.",
+    },
+
     "use-data": {
       title: "Use my data",
       body: "Copies the mean and standard deviation calculated on the Spread tab (rounded per the rounding rule) into this calculator.",

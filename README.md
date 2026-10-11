@@ -17,6 +17,11 @@ No installs, no build step, no dependencies — just open `index.html`.
 | **Coefficient of Variation** | Compare the consistency of two or more groups from raw data or a given mean and standard deviation. |
 | **Empirical Rule** | 68–95–99.7 questions ("less than", "at least", "between") with a shaded bell curve. |
 | **Chebyshev** | Solve for k, the percentage, or the interval μ ± kσ, for any distribution shape. |
+| **Stem & Leaf** | Builds a stem-and-leaf plot from raw data. |
+| **Z-Score** | z = (x − μ) ÷ s with steps. |
+| **Correlation** | Pearson's r from paired data. |
+| **Levels** | Classify a variable as nominal, ordinal, interval or ratio. |
+| **Mnemonics** | Memory phrases with their trigger words, when to use them, and a link to the matching calculator. Covers NOIR, My Silly Sister Sings Daily, Sandwich over Meat, X-men Under Siege, Kindly Offer Nice People One, Mean is Right/Left of the Median, Cats Really Fear Dogs and Mix For Mean. Includes a summary cheat sheet and a box where you paste a test question to see which mnemonic it needs. |
 | **Study Guide** | Vocabulary, rounding rule, discrete vs. continuous data, frequency-table terms, which rule to use, and a test-taking checklist. |
 
 Hover tips can be switched off with the checkbox at the top of the page.
@@ -48,6 +53,7 @@ node --test stats.test.js
 | `charts.js` | SVG charts (dot plot, histograms, bell curve, box plot, skew curve, line chart) |
 | `tips.js` | Hover-tooltip text and behaviour |
 | `app.js` | Wires inputs to calculations, step-by-step explanations and charts |
+| `mnemonics.js` | Mnemonic data, trigger-word matcher and the Mnemonics tab |
 | `stats.test.js` | Unit tests for `stats.js` |
 
 ## Notes
